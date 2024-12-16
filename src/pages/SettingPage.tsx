@@ -3,17 +3,37 @@ import Title from "@/components/common/Title";
 import { Block } from "@/components/common/Block";
 import { H4 } from "@/components/common/H4";
 import { commitList, targetList } from "@/const";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Button from "@/components/common/Button";
 import { Container } from "@/components/common/Container";
 import { useNavigate } from "react-router-dom";
 import Input from "@/components/common/Input";
+import useDebounce from "@/hooks/useDebounce";
+import { fetchBranches } from "@/api/git";
+import Dropdown from "@/components/common/Dropdown";
 
 const SettingPage = () => {
   const navigate = useNavigate();
   const [selectedTarget, setSelectedTarget] = useState<string>("1");
   const [repositoryPath, setRepositoryPath] = useState<string>("");
+  const debouncedPath = useDebounce(repositoryPath, 500);
+  const [branches, setBranches] = useState<string[]>([]);
+  const [selectedBranch, setSelectedBranch] = useState<string>("");
 
+  useEffect(() => {
+    if (debouncedPath) {
+      const getBranches = async () => {
+        try {
+          const branchesData = await fetchBranches(debouncedPath);
+          setBranches(branchesData.branches);
+        } catch (error) {
+          console.error("Error fetching branches:", error);
+        }
+      };
+
+      getBranches();
+    }
+  }, [debouncedPath]);
 
   return <Container>
     <div>

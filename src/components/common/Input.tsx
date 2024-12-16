@@ -26,7 +26,6 @@ const InputWrapper = styled.input`
     background-color: #F0F0F0;
     border-radius: 8px;
     max-height: 48px;
-    width: 100%;
     padding: 8px 12px;
     font-family: 'Courier', monospace;
 
