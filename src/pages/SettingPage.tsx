@@ -9,8 +9,13 @@ import { Container } from "@/components/common/Container";
 import { useNavigate } from "react-router-dom";
 import Input from "@/components/common/Input";
 import useDebounce from "@/hooks/useDebounce";
-import { fetchBranches } from "@/api/git";
+import { fetchBranches, fetchCommits } from "@/api/git";
 import Dropdown from "@/components/common/Dropdown";
+
+interface Commit {
+  commitId: string;
+  commitMessage: string;
+}
 
 const SettingPage = () => {
   const navigate = useNavigate();
@@ -19,6 +24,7 @@ const SettingPage = () => {
   const debouncedPath = useDebounce(repositoryPath, 500);
   const [branches, setBranches] = useState<string[]>([]);
   const [selectedBranch, setSelectedBranch] = useState<string>("");
+  const [commits, setCommits] = useState<Commit[]>([]);
 
   useEffect(() => {
     if (debouncedPath) {
@@ -34,6 +40,30 @@ const SettingPage = () => {
       getBranches();
     }
   }, [debouncedPath]);
+
+  useEffect(() => {
+    if (selectedTarget === "2" && debouncedPath && selectedBranch) {
+      const getCommits = async () => {
+        try {
+          const commitsData = await fetchCommits(debouncedPath, selectedBranch);
+          const formattedCommits = commitsData.commits.map((commit: string) => {
+            const [commitId, ...messageParts] = commit.split(' - ');
+            const commitMessage = messageParts.join(' - ').trim().replace(/^[^,]+,\s*/, '');
+
+            return {
+              commitId: commitId.trim(),
+              commitMessage: commitMessage.trim()
+            };
+          });
+          setCommits(formattedCommits);
+        } catch (error) {
+          console.error("Error fetching branches:", error);
+        }
+      };
+
+      getCommits();
+    }
+  }, [selectedTarget, selectedBranch])
 
   return <Container>
     <div>
@@ -64,10 +94,10 @@ const SettingPage = () => {
       {selectedTarget === "2" && <Block>
         <H4>Commit List</H4>
         <CommitList>
-          {commitList.map(commit => <label key={commit.value}>
-            <input type="checkbox" value={commit.value} />
-            <span>{commit.value}</span>
-            <span>{commit.label}</span>
+          {commits.map(commit => <label key={commit.commitId}>
+            <input type="checkbox" value={commit.commitId} />
+            <span>{commit.commitId}</span>
+            <span>{commit.commitMessage}</span>
           </label>)}
         </CommitList>
       </Block>
