@@ -7,47 +7,57 @@ import { useState } from "react";
 import Button from "@/components/common/Button";
 import { Container } from "@/components/common/Container";
 import { useNavigate } from "react-router-dom";
+import Input from "@/components/common/Input";
 
 const SettingPage = () => {
-    const navigate = useNavigate();
-    const [selectedTarget, setSelectedTarget] = useState<string>("1");
+  const navigate = useNavigate();
+  const [selectedTarget, setSelectedTarget] = useState<string>("1");
+  const [repositoryPath, setRepositoryPath] = useState<string>("");
 
-    return <Container>
-        <div>
-            <Title />
-            <Block>
-                <H4>Branch to Review</H4>
-                <select>
-                </select>
-            </Block>
-            <Block>
-                <H4>Review Target</H4>
-                <TargetList>
-                    {targetList.map(target =>
-                        <Target key={target.value}>
-                            <label>
-                                <input type="radio" value={target.value} checked={target.value === selectedTarget} onChange={() => setSelectedTarget(target.value)} />
-                                {target.label}</label>
-                        </Target>
-                    )}
-                </TargetList>
-            </Block>
-            {selectedTarget === "2" && <Block>
-                <H4>Commit List</H4>
-                <CommitList>
-                    {commitList.map(commit => <label key={commit.value}>
-                        <input type="checkbox" value={commit.value} />
-                        <span>{commit.value}</span>
-                        <span>{commit.label}</span>
-                    </label>)}
-                </CommitList>
-            </Block>
-            }
-        </div>
-        <div>
-            <Button onClick={() => navigate("/review")}>Analyze Code</Button>
-        </div>
-    </Container>
+
+  return <Container>
+    <div>
+      <Title />
+      <Block>
+        <H4>Local Repository Path</H4>
+        <Input
+          value={repositoryPath}
+          setValue={setRepositoryPath}
+          placeholder="Please enter the local repository path" />
+      </Block>
+      <Block>
+        <H4>Branch to Review</H4>
+        <select>
+        </select>
+      </Block>
+      <Block>
+        <H4>Review Target</H4>
+        <TargetList>
+          {targetList.map(target =>
+            <Target key={target.value}>
+              <label>
+                <input type="radio" value={target.value} checked={target.value === selectedTarget} onChange={() => setSelectedTarget(target.value)} />
+                {target.label}</label>
+            </Target>
+          )}
+        </TargetList>
+      </Block>
+      {selectedTarget === "2" && <Block>
+        <H4>Commit List</H4>
+        <CommitList>
+          {commitList.map(commit => <label key={commit.value}>
+            <input type="checkbox" value={commit.value} />
+            <span>{commit.value}</span>
+            <span>{commit.label}</span>
+          </label>)}
+        </CommitList>
+      </Block>
+      }
+    </div>
+    <div>
+      <Button onClick={() => navigate("/review")}>Analyze Code</Button>
+    </div>
+  </Container>
 }
 
 
