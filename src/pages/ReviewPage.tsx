@@ -36,7 +36,8 @@ const ReviewPage = () => {
                         review={{ improvementPoints: review.improvementPoints, suggestions: review.suggestions }}
                     />
                 )}
-            </Result></div>
+            </Result>
+        </div>
         <div>
             <ReviewOtherCode href="/">
                 <img src={ReturnIcon} />
@@ -52,6 +53,8 @@ const Result = styled.div`
     display: flex;
     flex-direction: column;
     gap: 8px;
+    height: 550px;
+    overflow-y: auto;
 `
 
 const BranchInfo = styled.div`
