@@ -47,8 +47,7 @@ const SettingPage = () => {
       </Block>
       <Block>
         <H4>Branch to Review</H4>
-        <select>
-        </select>
+        <Dropdown optionList={branches} selectedValue={selectedBranch} onChange={setSelectedBranch} />
       </Block>
       <Block>
         <H4>Review Target</H4>
