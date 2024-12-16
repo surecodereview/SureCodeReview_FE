@@ -2,10 +2,12 @@ import styled from "@emotion/styled"
 
 interface ButtonProps {
     children?: React.ReactNode;
+    onClick: () => void;
+    disabled?: boolean;
 }
 
-const Button = ({ children }: ButtonProps) => {
-    return <ButtonWrapper>
+const Button = ({ children, onClick, disabled }: ButtonProps) => {
+    return <ButtonWrapper onClick={onClick} disabled={disabled}>
         {children}
     </ButtonWrapper>
 }
@@ -24,4 +26,11 @@ const ButtonWrapper = styled.button`
     justify-content: center;
     align-items: center;
     cursor: pointer;
+
+
+    ${props => props.disabled && `
+        background-color: #F0F0F0;
+        color: #595959;
+        cursor: not-allowed;
+    `}
 `
