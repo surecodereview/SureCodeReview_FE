@@ -1,7 +1,9 @@
 import styled from "@emotion/styled";
+import { useNavigate } from "react-router-dom";
 
 const Title = () => {
-   return <H3>SURE CODE REVIEW</H3>
+    const navigate = useNavigate();
+    return <H3 onClick={() => navigate("/")}>SURE CODE REVIEW</H3>
 }
 
 const H3 = styled.h3`
@@ -11,6 +13,7 @@ const H3 = styled.h3`
     width: 100%;
     text-align: center;
     color: #243469;
+    cursor: pointer;
 `
 
 export default Title;
