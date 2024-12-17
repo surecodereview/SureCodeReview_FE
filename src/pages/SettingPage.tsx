@@ -2,14 +2,14 @@ import styled from "@emotion/styled";
 import Title from "@/components/common/Title";
 import { Block } from "@/components/common/Block";
 import { H4 } from "@/components/common/H4";
-import { commitList, targetList } from "@/const";
+import { targetList } from "@/const";
 import { useEffect, useState } from "react";
 import Button from "@/components/common/Button";
 import { Container } from "@/components/common/Container";
 import { useNavigate } from "react-router-dom";
 import Input from "@/components/common/Input";
 import useDebounce from "@/hooks/useDebounce";
-import { fetchBranches, fetchCommits } from "@/api/git";
+import { fetchBranches, fetchChanges, fetchCommits } from "@/api/git";
 import Dropdown from "@/components/common/Dropdown";
 import useLoading from "@/hooks/useLoading";
 import Loading from "@/components/common/Loading";
@@ -17,6 +17,11 @@ import Loading from "@/components/common/Loading";
 interface Commit {
   commitId: string;
   commitMessage: string;
+}
+
+interface Change {
+  id: string;
+  changes: string;
 }
 
 const SettingPage = () => {
@@ -76,17 +81,18 @@ const SettingPage = () => {
     }));
   };
 
-  const handleClickAnalyzeButton = () => {
+  const handleClickAnalyzeButton = async () => {
     startLoading();
     try {
-      setTimeout(() => {
-        stopLoading();
-      }, 3000);
+      const commitIds = Object.keys(selectedCommits);
+      const data: Change = await fetchChanges(repositoryPath, commitIds);
+    } catch (e) {
+      console.error('Error in handleClickAnalyzeButton:', e);
     } finally {
+      stopLoading();
       // navigate("/review");
     }
-  }
-
+  };
 
   return <>
     {loading && <Loading />}
@@ -135,7 +141,11 @@ const SettingPage = () => {
         </Content>
       </div>
       <div>
-        <Button onClick={handleClickAnalyzeButton}>Analyze Code</Button>
+        <Button
+          onClick={handleClickAnalyzeButton}
+          disabled={repositoryPath === "" || selectedBranch === ""}>
+          Analyze Code
+        </Button>
       </div>
     </Container>
   </>
