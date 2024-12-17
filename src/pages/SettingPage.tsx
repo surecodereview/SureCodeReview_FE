@@ -11,6 +11,8 @@ import Input from "@/components/common/Input";
 import useDebounce from "@/hooks/useDebounce";
 import { fetchBranches, fetchCommits } from "@/api/git";
 import Dropdown from "@/components/common/Dropdown";
+import useLoading from "@/hooks/useLoading";
+import Loading from "@/components/common/Loading";
 
 interface Commit {
   commitId: string;
@@ -26,6 +28,7 @@ const SettingPage = () => {
   const [selectedBranch, setSelectedBranch] = useState<string>("");
   const [commits, setCommits] = useState<Commit[]>([]);
   const [selectedCommits, setSelectedCommits] = useState<Record<string, boolean>>({});
+  const { loading, startLoading, stopLoading } = useLoading();
 
   useEffect(() => {
     if (debouncedPath) {
@@ -73,54 +76,69 @@ const SettingPage = () => {
     }));
   };
 
-  return <Container>
-    <div>
-      <Title />
-      <Content>
-        <Block>
-          <H4>Local Repository Path</H4>
-          <Input
-            value={repositoryPath}
-            setValue={setRepositoryPath}
-            placeholder="Please enter the local repository path" />
-        </Block>
-        <Block>
-          <H4>Branch to Review</H4>
-          <Dropdown optionList={branches} selectedValue={selectedBranch} onChange={setSelectedBranch} />
-        </Block>
-        <Block>
-          <H4>Review Target</H4>
-          <TargetList>
-            {targetList.map(target =>
-              <Target key={target.value}>
-                <label>
-                  <input type="radio" value={target.value} checked={target.value === selectedTarget} onChange={() => setSelectedTarget(target.value)} />
-                  {target.label}</label>
-              </Target>
-            )}
-          </TargetList>
-        </Block>
-        {selectedTarget === "2" && <Block>
-          <H4>Commit List</H4>
-          <CommitList>
-            {commits.map(commit => <label key={commit.commitId}>
-              <input
-                type="checkbox"
-                value={commit.commitId}
-                checked={!!selectedCommits[commit.commitId]}
-                onChange={() => handleCommitToggle(commit.commitId)} />
-              <span>{commit.commitId}</span>
-              <span>{commit.commitMessage}</span>
-            </label>)}
-          </CommitList>
-        </Block>
-        }
-      </Content>
-    </div>
-    <div>
-      <Button onClick={() => navigate("/review")}>Analyze Code</Button>
-    </div>
-  </Container>
+  const handleClickAnalyzeButton = () => {
+    startLoading();
+    try {
+      setTimeout(() => {
+        stopLoading();
+      }, 3000);
+    } finally {
+      // navigate("/review");
+    }
+  }
+
+
+  return <>
+    {loading && <Loading />}
+    <Container>
+      <div>
+        <Title />
+        <Content>
+          <Block>
+            <H4>Local Repository Path</H4>
+            <Input
+              value={repositoryPath}
+              setValue={setRepositoryPath}
+              placeholder="Please enter the local repository path" />
+          </Block>
+          <Block>
+            <H4>Branch to Review</H4>
+            <Dropdown optionList={branches} selectedValue={selectedBranch} onChange={setSelectedBranch} />
+          </Block>
+          <Block>
+            <H4>Review Target</H4>
+            <TargetList>
+              {targetList.map(target =>
+                <Target key={target.value}>
+                  <label>
+                    <input type="radio" value={target.value} checked={target.value === selectedTarget} onChange={() => setSelectedTarget(target.value)} />
+                    {target.label}</label>
+                </Target>
+              )}
+            </TargetList>
+          </Block>
+          {selectedTarget === "2" && <Block>
+            <H4>Commit List</H4>
+            <CommitList>
+              {commits.map(commit => <label key={commit.commitId}>
+                <input
+                  type="checkbox"
+                  value={commit.commitId}
+                  checked={!!selectedCommits[commit.commitId]}
+                  onChange={() => handleCommitToggle(commit.commitId)} />
+                <span>{commit.commitId}</span>
+                <span>{commit.commitMessage}</span>
+              </label>)}
+            </CommitList>
+          </Block>
+          }
+        </Content>
+      </div>
+      <div>
+        <Button onClick={handleClickAnalyzeButton}>Analyze Code</Button>
+      </div>
+    </Container>
+  </>
 }
 
 
