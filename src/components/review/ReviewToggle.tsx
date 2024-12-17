@@ -3,23 +3,18 @@ import { H4 } from "@/components/common/H4";
 import ArrowDownIcon from "@assets/arrowDown.svg";
 import ArrowUpIcon from "@assets/arrowUp.svg";
 
-interface Review {
-    improvementPoints: string;
-    suggestions: string;
-}
-
 interface ReviewToggleProps {
     commitId: string;
     commitMessage: string;
     isOpen: boolean;
     setIsOpen: React.Dispatch<React.SetStateAction<number>>;
-    review: Review;
+    review: string;
 }
 
 const ReviewToggle = ({ commitId, commitMessage, isOpen, setIsOpen, review }: ReviewToggleProps) => {
     return (
-        <ToggleWrapper onClick={() => setIsOpen(-1)}>
-            <ToggleTitle>
+        <ToggleWrapper>
+            <ToggleTitle onClick={() => setIsOpen(-1)}>
                 <ReviewInfo>
                     <span>{commitId}</span>
                     <span>{commitMessage}</span>
@@ -28,8 +23,8 @@ const ReviewToggle = ({ commitId, commitMessage, isOpen, setIsOpen, review }: Re
             </ToggleTitle>
             {isOpen && (
                 <ToggleContent>
-                    <H4>개선할 점</H4>
-                    <span>{review.improvementPoints}</span>
+                    <H4>분석 내용</H4>
+                    <span>{review}</span>
                 </ToggleContent>
             )}
         </ToggleWrapper>

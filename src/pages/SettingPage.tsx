@@ -13,15 +13,13 @@ import { fetchBranches, fetchChanges, fetchCommits } from "@/api/git";
 import Dropdown from "@/components/common/Dropdown";
 import useLoading from "@/hooks/useLoading";
 import Loading from "@/components/common/Loading";
+import { Change, fetchReviews, ReviewResult } from "@/api/review";
+import { useRecoilState } from "recoil";
+import { reviewState } from "@/recoil/atoms/reviewState";
 
 interface Commit {
   commitId: string;
   commitMessage: string;
-}
-
-interface Change {
-  id: string;
-  changes: string;
 }
 
 const SettingPage = () => {
@@ -34,6 +32,7 @@ const SettingPage = () => {
   const [commits, setCommits] = useState<Commit[]>([]);
   const [selectedCommits, setSelectedCommits] = useState<Record<string, boolean>>({});
   const { loading, startLoading, stopLoading } = useLoading();
+  const [review, setReview] = useRecoilState(reviewState);
 
   useEffect(() => {
     if (debouncedPath) {
@@ -85,12 +84,16 @@ const SettingPage = () => {
     startLoading();
     try {
       const commitIds = Object.keys(selectedCommits);
-      const data: Change = await fetchChanges(repositoryPath, commitIds);
+      const changes: Change[] = await fetchChanges(repositoryPath, commitIds);
+
+      // llama 모델 호출 및 응답값 state에 저장
+      const reviews: ReviewResult[] = await fetchReviews(changes);
+      setReview(reviews);
+      navigate("/review");
     } catch (e) {
       console.error('Error in handleClickAnalyzeButton:', e);
     } finally {
       stopLoading();
-      // navigate("/review");
     }
   };
 

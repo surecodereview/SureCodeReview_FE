@@ -1,14 +1,7 @@
+import { ReviewResult } from "@/api/review";
 import { atom } from "recoil";
 
-export interface Review {
-    improvementPoints: string;
-    suggestions: string;
-}
-
-export const reviewState = atom<Review>({
+export const reviewState = atom<ReviewResult[]>({
     key: "reviewState",
-    default: {
-        improvementPoints: "",
-        suggestions: ""
-    },
+    default: []
 })

@@ -7,10 +7,13 @@ import { Code } from "@/components/review/Code";
 import ReviewToggle from "@/components/review/ReveiwToggle";
 import { reviewList } from "@/const";
 import { useState } from "react";
+import { useRecoilValue } from "recoil";
+import { reviewState } from "@/recoil/atoms/reviewState";
 
 
 const ReviewPage = () => {
     const [openStates, setOpenStates] = useState<boolean[]>(Array(reviewList.length).fill(false));
+    const reviews = useRecoilValue(reviewState);
 
     const toggleOpen = (index: number) => {
         setOpenStates(prevStates =>
@@ -26,14 +29,14 @@ const ReviewPage = () => {
                     <H4>target branch</H4>
                     <Code>main</Code>
                 </BranchInfo>
-                {reviewList.map((review, idx) =>
+                {reviews.map((review, idx) =>
                     <ReviewToggle
-                        key={review.value}
-                        commitId={review.value}
-                        commitMessage={review.label}
+                        key={review.id}
+                        commitId={review.id}
+                        commitMessage={idx + ""}
                         isOpen={openStates[idx]}
                         setIsOpen={() => toggleOpen(idx)}
-                        review={{ improvementPoints: review.improvementPoints, suggestions: review.suggestions }}
+                        review={review.review}
                     />
                 )}
             </Result>
