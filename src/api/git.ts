@@ -12,12 +12,5 @@ export const fetchCommits = async (repositoryPath: string, branch: string) => {
 
 // 특정 커밋의 변경 사항 가져오기
 export const fetchChanges = async (repositoryPath: string, commitIds: string[]) => {
-    const response = await fetch(`/changes?commitIds=${commitIds.join(',')}&path=${encodeURIComponent(repositoryPath)}`, {
-        method: 'GET',
-        headers: { 'Content-Type': 'application/json' },
-    });
-
-    if (!response.ok) throw new Error('Network response was not ok');
-
-    return response.json();
+    return await apiGet(`/changes?commitIds=${commitIds.join(',')}&path=${encodeURIComponent(repositoryPath)}`);
 };
