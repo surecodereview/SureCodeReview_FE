@@ -1,4 +1,4 @@
-import { apiGet } from './index';
+import { apiGet } from '@api/index';
 
 // 모든 브랜치 목록 가져오기
 export const fetchBranches = async (repositoryPath: string) => {
