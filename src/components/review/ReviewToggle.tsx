@@ -2,6 +2,7 @@ import styled from "@emotion/styled";
 import { H4 } from "@/components/common/H4";
 import ArrowDownIcon from "@assets/arrowDown.svg";
 import ArrowUpIcon from "@assets/arrowUp.svg";
+import ReactMarkdown from 'react-markdown';
 
 interface ReviewToggleProps {
     commitId: string;
@@ -24,7 +25,7 @@ const ReviewToggle = ({ commitId, commitMessage, isOpen, setIsOpen, review }: Re
             {isOpen && (
                 <ToggleContent>
                     <H4>분석 내용</H4>
-                    <span>{review}</span>
+                    <ReactMarkdown>{review}</ReactMarkdown>
                 </ToggleContent>
             )}
         </ToggleWrapper>
@@ -66,6 +67,7 @@ const ReviewInfo = styled.div`
 const ToggleContent = styled.div`
     display: flex;
     flex-direction: column;
+    margin-top: 16px;
 `;
 
 export default ReviewToggle;

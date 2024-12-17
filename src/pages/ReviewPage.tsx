@@ -4,7 +4,7 @@ import Title from "@/components/common/Title"
 import { H4 } from "@/components/common/H4";
 import ReturnIcon from "@assets/return.svg";
 import { Code } from "@/components/review/Code";
-import ReviewToggle from "@/components/review/ReveiwToggle";
+import ReviewToggle from "@/components/review/ReviewToggle";
 import { reviewList } from "@/const";
 import { useState } from "react";
 import { useRecoilValue } from "recoil";
@@ -27,7 +27,7 @@ const ReviewPage = () => {
             <Result>
                 <BranchInfo>
                     <H4>target branch</H4>
-                    <Code>main</Code>
+                    <code>main</code>
                 </BranchInfo>
                 {reviews.map((review, idx) =>
                     <ReviewToggle
@@ -58,6 +58,12 @@ const Result = styled.div`
     gap: 8px;
     height: 550px;
     overflow-y: auto;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+    
+    &::-webkit-scrollbar {
+        display: none;
+    }
 `
 
 const BranchInfo = styled.div`
