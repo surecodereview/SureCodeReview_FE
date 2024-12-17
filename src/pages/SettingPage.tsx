@@ -25,6 +25,7 @@ const SettingPage = () => {
   const [branches, setBranches] = useState<string[]>([]);
   const [selectedBranch, setSelectedBranch] = useState<string>("");
   const [commits, setCommits] = useState<Commit[]>([]);
+  const [selectedCommits, setSelectedCommits] = useState<Record<string, boolean>>({});
 
   useEffect(() => {
     if (debouncedPath) {
@@ -65,43 +66,56 @@ const SettingPage = () => {
     }
   }, [selectedTarget, selectedBranch])
 
+  const handleCommitToggle = (commitId: string) => {
+    setSelectedCommits(prevState => ({
+      ...prevState,
+      [commitId]: !prevState[commitId]
+    }));
+  };
+
   return <Container>
     <div>
       <Title />
-      <Block>
-        <H4>Local Repository Path</H4>
-        <Input
-          value={repositoryPath}
-          setValue={setRepositoryPath}
-          placeholder="Please enter the local repository path" />
-      </Block>
-      <Block>
-        <H4>Branch to Review</H4>
-        <Dropdown optionList={branches} selectedValue={selectedBranch} onChange={setSelectedBranch} />
-      </Block>
-      <Block>
-        <H4>Review Target</H4>
-        <TargetList>
-          {targetList.map(target =>
-            <Target key={target.value}>
-              <label>
-                <input type="radio" value={target.value} checked={target.value === selectedTarget} onChange={() => setSelectedTarget(target.value)} />
-                {target.label}</label>
-            </Target>
-          )}
-        </TargetList>
-      </Block>
-      {selectedTarget === "2" && <Block>
-        <H4>Commit List</H4>
-        <CommitList>
-          {commits.map(commit => <label key={commit.commitId}>
-            <input type="checkbox" value={commit.commitId} />
-            <span>{commit.commitId}</span>
-            <span>{commit.commitMessage}</span>
-          </label>)}
-        </CommitList>
-      </Block>
-      }
+      <Content>
+        <Block>
+          <H4>Local Repository Path</H4>
+          <Input
+            value={repositoryPath}
+            setValue={setRepositoryPath}
+            placeholder="Please enter the local repository path" />
+        </Block>
+        <Block>
+          <H4>Branch to Review</H4>
+          <Dropdown optionList={branches} selectedValue={selectedBranch} onChange={setSelectedBranch} />
+        </Block>
+        <Block>
+          <H4>Review Target</H4>
+          <TargetList>
+            {targetList.map(target =>
+              <Target key={target.value}>
+                <label>
+                  <input type="radio" value={target.value} checked={target.value === selectedTarget} onChange={() => setSelectedTarget(target.value)} />
+                  {target.label}</label>
+              </Target>
+            )}
+          </TargetList>
+        </Block>
+        {selectedTarget === "2" && <Block>
+          <H4>Commit List</H4>
+          <CommitList>
+            {commits.map(commit => <label key={commit.commitId}>
+              <input
+                type="checkbox"
+                value={commit.commitId}
+                checked={!!selectedCommits[commit.commitId]}
+                onChange={() => handleCommitToggle(commit.commitId)} />
+              <span>{commit.commitId}</span>
+              <span>{commit.commitMessage}</span>
+            </label>)}
+          </CommitList>
+        </Block>
+        }
+      </Content>
     </div>
     <div>
       <Button onClick={() => navigate("/review")}>Analyze Code</Button>
@@ -111,6 +125,14 @@ const SettingPage = () => {
 
 
 export default SettingPage;
+
+const Content = styled.div`
+  height: 500px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+`
 
 
 const Target = styled.div`
