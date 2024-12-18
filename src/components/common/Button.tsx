@@ -20,7 +20,7 @@ const ButtonWrapper = styled.button`
     border-radius: 8px;
     background-color: #243469;
     color: #ffffff;
-    font-size: 20px;
+    font-size: 16px;
     display: flex;
     gap: 12px;
     justify-content: center;
@@ -36,5 +36,9 @@ const ButtonWrapper = styled.button`
         background-color: #F0F0F0;
         color: #595959;
         cursor: not-allowed;
+
+        &:hover {
+            background-color:#F0F0F0;
+        }
     `}
 `
