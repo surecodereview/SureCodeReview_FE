@@ -7,14 +7,17 @@ import { useSetRecoilState } from "recoil";
 import { Target, targetState } from "@/recoil/atoms/targetState";
 import { useEffect } from "react";
 import { branchState } from "@/recoil/atoms/branchState";
+import { repositoryState } from "@/recoil/atoms/repositoryState";
 
 const ChoosePage = () => {
     const navigate = useNavigate();
     const setTarget = useSetRecoilState(targetState);
     const setBranch = useSetRecoilState(branchState);
+    const setRepository = useSetRecoilState(repositoryState);
 
     useEffect(() => {
         setBranch("");
+        setRepository("");
     }, [])
 
     const handleButtonClick = (target: Target) => {
