@@ -37,11 +37,11 @@ const ReviewPage = () => {
         <Result>
             <SettingInfo>
                 <Info>
-                    <H4>Target Repository</H4>
-                    <Code color="#FFFC49">hi{repository}</Code>
+                    <H4>Repository</H4>
+                    <Code color="#FFFC49">{repository}</Code>
                 </Info>
                 <Info>
-                    <H4>Target Branch</H4>
+                    <H4>Branch</H4>
                     <Code color="#89DAFF">{branch}</Code>
                 </Info>
             </SettingInfo>
@@ -89,7 +89,7 @@ const Info = styled.div`
     gap: 12px;
 
     h4 {
-        width: 140px;
+        width: 88px;
         white-space: nowrap;
         font-size: 16px;
     }
