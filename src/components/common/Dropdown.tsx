@@ -21,7 +21,9 @@ const Dropdown = ({ optionList, selectedValue, onChange, placeholder }: Dropdown
             <Selected
                 disabled={optionList.length === 0}
                 onClick={() => optionList.length > 0 && setIsOpen(!isOpen)}>
-                {selectedValue || (placeholder ?? 'Select an option')}
+                <SelectedText>
+                    {selectedValue || (placeholder ?? 'Select an option')}
+                </SelectedText>
                 <Arrow isOpen={isOpen} disabled={optionList.length === 0} />
             </Selected>
             {isOpen && optionList.length > 0 && (
@@ -41,7 +43,7 @@ export default Dropdown;
 
 const SelectContainer = styled.div`
     position: relative;
-    max-width: 200px;
+    width: 200px;
 `;
 
 const Selected = styled.div<{ disabled: boolean }>`
@@ -56,6 +58,9 @@ const Selected = styled.div<{ disabled: boolean }>`
     justify-content: space-between;
     align-items: center;
     font-family: 'Courier', sans-serif;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 
     ${props => props.disabled && `
         border: 1px solid rgb(220, 220, 220);
@@ -63,6 +68,12 @@ const Selected = styled.div<{ disabled: boolean }>`
         color:rgb(131, 131, 131);
         cursor: not-allowed;
     `}
+`;
+
+const SelectedText = styled.span`
+    flex-grow: 1; // 남은 공간을 차지하게 함
+    overflow: hidden; // 넘치는 내용 숨기기
+    text-overflow: ellipsis; // 말줄임표 표시
 `;
 
 const Arrow = styled.div<{ isOpen: boolean, disabled: boolean }>`
@@ -74,8 +85,6 @@ const Arrow = styled.div<{ isOpen: boolean, disabled: boolean }>`
     transform: ${({ isOpen }) => (isOpen ? 'rotate(180deg)' : 'rotate(0deg)')};
 
     ${props => props.disabled && `
-        border-left: 5px solid transparent; 
-        border-right: 5px solid transparent;
         border-top: 5px solid #b3b3b3;
     `}
 `;
@@ -89,17 +98,20 @@ const OptionListContainer = styled.div`
     border: 1px solid #696969;
     border-radius: 8px;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-    z-index: 10; // Ensure it appears above other elements
+    z-index: 10;
 `;
 
 const Option = styled.div`
     padding: 10px;
     cursor: pointer;
     font-family: 'Courier', sans-serif;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 
     &:hover {
-        background-color: #f0f0f0; // Hover effect
-        color: #000; // Change text color on hover
+        background-color: #f0f0f0;
+        color: #000000;
     }
 
     &:first-of-type {
