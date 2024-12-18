@@ -28,7 +28,7 @@ const SettingPage = () => {
   const [selectedTarget, setSelectedTarget] = useState<string>("1");
   const [repo, setRepo] = useRecoilState(repositoryState);
   const [owner, setOwner] = useState<string>("");
-  const debouncedPath = useDebounce(repo, 500);
+  const debouncedRepo = useDebounce(repo, 500);
   const [branches, setBranches] = useState<string[]>([]);
   const [selectedBranch, setSelectedBranch] = useRecoilState(branchState);
   const [commits, setCommits] = useRecoilState(commitState);
@@ -37,10 +37,10 @@ const SettingPage = () => {
   const setReview = useSetRecoilState(reviewState);
 
   useEffect(() => {
-    if (debouncedPath) {
+    if (debouncedRepo) {
       const getBranches = async () => {
         try {
-          const branchesData = await fetchBranches(debouncedPath);
+          const branchesData = await fetchBranches(debouncedRepo);
           setBranches(branchesData.branches);
         } catch (error) {
           setBranches([]);
@@ -52,7 +52,7 @@ const SettingPage = () => {
     } else {
       setBranches([]);
     }
-  }, [debouncedPath]);
+  }, [debouncedRepo]);
 
   useEffect(() => {
     if (owner && repo) {
@@ -70,14 +70,14 @@ const SettingPage = () => {
     } else {
       setBranches([]);
     }
-  }, [owner, repo])
+  }, [owner, debouncedRepo])
 
   useEffect(() => {
-    if (target === "local" && selectedTarget === "2" && debouncedPath && selectedBranch) {
+    if (target === "local" && selectedTarget === "2" && debouncedRepo && selectedBranch) {
       startLoading();
       const getCommits = async () => {
         try {
-          const commitsData = await fetchCommits(debouncedPath, selectedBranch);
+          const commitsData = await fetchCommits(debouncedRepo, selectedBranch);
           const formattedCommits = commitsData.commits.map((commit: string) => {
             const [commitId, ...messageParts] = commit.split(' - ');
             const commitMessage = messageParts.join(' - ').trim().replace(/^[^,]+,\s*/, '');
