@@ -6,25 +6,29 @@ import { targetList } from "@/const";
 import { useEffect, useState } from "react";
 import Button from "@/components/common/Button";
 import { Container } from "@/components/common/Container";
-import { useNavigate } from "react-router-dom";
+import { Navigate, useNavigate } from "react-router-dom";
 import Input from "@/components/common/Input";
 import useDebounce from "@/hooks/useDebounce";
-import { fetchBranches, fetchChanges, fetchCommits } from "@/api/git";
+import { fetchBranches, fetchChanges, fetchCommits, fetchRemoteBranches, fetchRemoteChanges, fetchRemoteCommits } from "@/api/git";
 import Dropdown from "@/components/common/Dropdown";
 import useLoading from "@/hooks/useLoading";
 import Loading from "@/components/common/Loading";
 import { Change, fetchReviews, ReviewResult } from "@/api/review";
-import { useRecoilState, useSetRecoilState } from "recoil";
+import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import { reviewState } from "@/recoil/atoms/reviewState";
 import { branchState } from "@/recoil/atoms/branchState";
-import { commitState } from "@/recoil/atoms/commitState";
+import { commitState, RemoteCommit } from "@/recoil/atoms/commitState";
 import Checkbox from "@/components/common/Checkbox";
+import { targetState } from "@/recoil/atoms/targetState";
+import { repositoryState } from "@/recoil/atoms/repositoryState";
 
 const SettingPage = () => {
   const navigate = useNavigate();
+  const target = useRecoilValue(targetState);
   const [selectedTarget, setSelectedTarget] = useState<string>("1");
-  const [repositoryPath, setRepositoryPath] = useState<string>("");
-  const debouncedPath = useDebounce(repositoryPath, 500);
+  const [repo, setRepo] = useRecoilState(repositoryState);
+  const [owner, setOwner] = useState<string>("");
+  const debouncedPath = useDebounce(repo, 500);
   const [branches, setBranches] = useState<string[]>([]);
   const [selectedBranch, setSelectedBranch] = useRecoilState(branchState);
   const [commits, setCommits] = useRecoilState(commitState);
@@ -51,7 +55,26 @@ const SettingPage = () => {
   }, [debouncedPath]);
 
   useEffect(() => {
-    if (selectedTarget === "2" && debouncedPath && selectedBranch) {
+    if (owner && repo) {
+      const getBranches = async () => {
+        try {
+          const branchesData = await fetchRemoteBranches(owner, repo);
+          setBranches(branchesData);
+        } catch (error) {
+          setBranches([]);
+          console.error("Error fetching branches:", error);
+        }
+      };
+
+      getBranches();
+    } else {
+      setBranches([]);
+    }
+  }, [owner, repo])
+
+  useEffect(() => {
+    if (target === "local" && selectedTarget === "2" && debouncedPath && selectedBranch) {
+      startLoading();
       const getCommits = async () => {
         try {
           const commitsData = await fetchCommits(debouncedPath, selectedBranch);
@@ -67,12 +90,36 @@ const SettingPage = () => {
           setCommits(formattedCommits);
         } catch (error) {
           console.error("Error fetching branches:", error);
+        } finally {
+          stopLoading();
+        }
+      };
+
+      getCommits();
+    } else if (target === "remote" && selectedTarget === "2" && owner && repo && selectedBranch) {
+      startLoading();
+      const getCommits = async () => {
+        try {
+          const commitsData = await fetchRemoteCommits(owner, repo, selectedBranch);
+          console.log(commitsData)
+          const formattedCommits = commitsData.map((commit: RemoteCommit) => {
+            return {
+              commitId: commit.sha.slice(0, 7).trim(),
+              commitMessage: commit.message.trim()
+            };
+          });
+          setCommits(formattedCommits);
+        } catch (error) {
+          console.error("Error fetching branches:", error);
+        } finally {
+          stopLoading();
         }
       };
 
       getCommits();
     }
   }, [selectedTarget, selectedBranch])
+
 
   const handleCommitToggle = (commitId: string) => {
     setSelectedCommits(prevState => ({
@@ -85,12 +132,21 @@ const SettingPage = () => {
     startLoading();
     try {
       const commitIds = Object.keys(selectedCommits);
-      const changes: Change[] = await fetchChanges(repositoryPath, commitIds);
+      let changes: Change[];
+      if (target === "local") {
+        changes = await fetchChanges(repo, commitIds);
+      } else {
+        changes = await fetchRemoteChanges(owner, repo, commitIds);
+      }
+
+      console.log(changes)
 
       // llama 모델 호출 및 응답값 state에 저장
-      const reviews: ReviewResult[] = await fetchReviews(changes);
-      setReview(reviews);
-      navigate("/review");
+      if (changes) {
+        const reviews: ReviewResult[] = await fetchReviews(changes);
+        setReview(reviews);
+        navigate("/review");
+      }
     } catch (e) {
       console.error('Error in handleClickAnalyzeButton:', e);
     } finally {
@@ -98,18 +154,42 @@ const SettingPage = () => {
     }
   };
 
+  if (!target) {
+    return <Navigate to="/" replace />;
+  }
+
   return <>
     {loading && <Loading />}
     <Container>
       <Title />
       <Content>
-        <Block>
-          <H4>Local Repository Path</H4>
-          <Input
-            value={repositoryPath}
-            setValue={setRepositoryPath}
-            placeholder="Please enter the local repository path" />
-        </Block>
+        {target === "local" &&
+          <Block>
+            <H4>Local Repository Path</H4>
+            <Input
+              value={repo}
+              setValue={setRepo}
+              placeholder="Please enter the local repository path" />
+          </Block>
+        }
+        {target === "remote" &&
+          <div style={{ display: "flex", gap: "36px" }}>
+            <Block>
+              <H4>Repository Owner</H4>
+              <Input
+                value={owner}
+                setValue={setOwner}
+                placeholder="Please enter the remote repository owner" />
+            </Block>
+            <Block>
+              <H4>Repository Name</H4>
+              <Input
+                value={repo}
+                setValue={setRepo}
+                placeholder="Please enter the remote repository name" />
+            </Block>
+          </div>
+        }
         <Block>
           <H4>Branch to Review</H4>
           <Dropdown
@@ -134,20 +214,17 @@ const SettingPage = () => {
           <CommitList>
             {
               commits.length === 0 && branches.length === 0 &&
-              <EmptyMessage>로컬 레포지토리 경로를 입력해 주세요.</EmptyMessage>
-            }
-            {
-              commits.length === 0 && branches.length > 0 && selectedBranch === "" &&
               <EmptyMessage>브랜치를 선택해 주세요.</EmptyMessage>
             }
-            {commits.map(commit => <label key={commit.commitId}>
-              <Checkbox
-                value={commit.commitId}
-                checked={!!selectedCommits[commit.commitId]}
-                onChange={() => handleCommitToggle(commit.commitId)} />
-              <span>{commit.commitId}</span>
-              <span>{commit.commitMessage}</span>
-            </label>)}
+            {commits.map(commit =>
+              <label key={commit.commitId}>
+                <Checkbox
+                  value={commit.commitId}
+                  checked={!!selectedCommits[commit.commitId]}
+                  onChange={() => handleCommitToggle(commit.commitId)} />
+                <span>{commit.commitId}</span>
+                <span>{commit.commitMessage}</span>
+              </label>)}
           </CommitList>
         </Block>
         }
@@ -156,8 +233,12 @@ const SettingPage = () => {
         <Button
           onClick={handleClickAnalyzeButton}
           disabled={
-            repositoryPath === "" ||
-            selectedBranch === "" ||
+            (target === "local" && (
+              repo === "" &&
+              selectedBranch === ""
+            )) || (target === "remote" && (
+              owner === "" || repo === "" || selectedBranch === ""
+            )) ||
             selectedTarget === "2" && !Object.values(selectedCommits).some(Boolean)
           }>
           Analyze Code
