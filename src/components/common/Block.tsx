@@ -15,4 +15,5 @@ const BrockWrapper = styled.div`
     flex-direction: column;
     flew-wrap: nowrap;
     gap: 12px;
+    width: 100%;
 `

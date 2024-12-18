@@ -14,7 +14,7 @@ export default Checkbox;
 
 const CheckboxWrapper = styled.input`
   appearance: none;
-  width: 20px;
+  min-width: 20px;
   height: 20px;
   border: 2px solid #D9D9D9;
   border-radius: 4px;

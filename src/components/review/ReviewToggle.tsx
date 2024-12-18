@@ -60,11 +60,12 @@ const ReviewInfo = styled.div`
     padding: 4px 12px;
     flex-grow: 1;
     width: 90%;
-    font-family: 'Courier';
+    align-items: center;
 
     span:nth-of-type(1) {
         font-weight: 600;
         color: #E24848;
+        font-family: 'Courier', sans-serif;
     }
 
     span:nth-of-type(2) {
@@ -72,6 +73,7 @@ const ReviewInfo = styled.div`
         overflow: hidden;
         text-overflow: ellipsis;
         font-weight: 400;
+        font-family: 'Pretendard' sans-serif;
     }
 `;
 
