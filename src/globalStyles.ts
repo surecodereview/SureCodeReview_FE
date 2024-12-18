@@ -10,7 +10,7 @@ export const globalStyles = css`
   }
 
   body {
-    font-family: 'Courier', monospace;
+    font-family: 'Pretendard' sans-serif;
     -ms-overflow-style: none; 
     scrollbar-width: none;
   }
@@ -20,7 +20,12 @@ export const globalStyles = css`
   }
 
   pre {
+  	padding: 12px 16px;
     margin: 0;
+  	border: none;
+  	border-radius: 4px;
+    background-color: #e9ecef;
+    position: relative;
   }
 
   code {
@@ -30,7 +35,7 @@ export const globalStyles = css`
     background-color: #e9ecef;
     font-size: 0.8rem;
     line-height: 1.5;
-    font-family: "Pretendard", "Courier", sans-serif;
+    font-family: "Courier", sans-serif;
   }
 
   button {

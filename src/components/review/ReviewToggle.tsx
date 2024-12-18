@@ -54,13 +54,21 @@ const ToggleTitle = styled.div`
 const ReviewInfo = styled.div`
     display: flex;
     gap: 28px;
+    padding: 4px 12px;
     flex-grow: 1;
     width: 90%;
+    font-family: 'Courier';
+
+    span:nth-of-type(1) {
+        font-weight: 600;
+        color: #E24848;
+    }
 
     span:nth-of-type(2) {
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
+        font-weight: 400;
     }
 `;
 
@@ -68,6 +76,8 @@ const ToggleContent = styled.div`
     display: flex;
     flex-direction: column;
     margin-top: 16px;
+    padding: 0 12px 12px 12px;
+    font-family: 'Pretendard';
 `;
 
 export default ReviewToggle;

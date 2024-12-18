@@ -55,27 +55,23 @@ export default ReviewPage;
 const Result = styled.div`
     display: flex;
     flex-direction: column;
+    align-content: flex-start;
     gap: 8px;
-    height: 550px;
     overflow-y: auto;
-    -ms-overflow-style: none;
     scrollbar-width: none;
-    
-    &::-webkit-scrollbar {
-        display: none;
-    }
+    flex: 1;
 `
 
 const BranchInfo = styled.div`
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 12px;
     
     pre {
         width: fit-content;
     }
 `
-const ReviewOtherCode = styled.a`
+const ReviewOtherCode = styled.button`
     display: flex;
     align-items: center;
     gap:8px;
@@ -89,6 +85,6 @@ const ReviewOtherCode = styled.a`
         color: #4A7DFF;
         text-decoration: underline;
         text-decoration-color: #4A7DFF;
-        font-size: 20px;
+        font-size: 16px;
     }
 `

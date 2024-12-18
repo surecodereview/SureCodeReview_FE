@@ -31,15 +31,16 @@ export const Code = ({ children, color, copy }: CodeProps) => {
 }
 
 const CodeWrapper = styled.pre<{ $fColor?: string }>`
-    background-color: #F0F0F0;
     border-radius: 8px;
     width: 100%;
     padding: 5px;
     position: relative;
-
+    padding: 0;
+    
     code {
         font-weight: 600;
         color: ${props => props.$fColor ?? '#000000'};
+        background-color: #303030;
     }
 
     button {

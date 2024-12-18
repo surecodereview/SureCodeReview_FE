@@ -158,21 +158,51 @@ const SettingPage = () => {
 export default SettingPage;
 
 const Content = styled.div`
-  height: 500px;
+  flex: 1;
   overflow-y: auto;
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  justify-content: flex-start;
+  gap: 24px;
+  scrollbar-width: none;
 `
-
 
 const Target = styled.div`
   display: flex;
+  align-items: center;
   gap: 2px;
   cursor: pointer;
+  font-family: 'Courier', sans-serif;
+  font-size: 1rem;
 
   label, input {
     cursor: pointer;
+  }
+
+  input[type="radio"] {
+    appearance: none;
+    width: 20px;
+    height: 20px;
+    border: 2px solid #D9D9D9;
+    border-radius: 50%;
+    margin-right: 10px;
+    background-color: #D9D9D9;
+
+    &:checked {
+      position: relative;
+
+      &::after {
+        content: '';
+        width: 12px;
+        height: 12px;
+        background-color: #243469;
+        border-radius: 50%;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+      }
+    }
   }
 `
 
@@ -188,18 +218,23 @@ const CommitList = styled.div`
   overflow-y: auto;
   display: flex;
   flex-direction: column;
-  height: 156px;
-  padding: 16px;
+  min-height: 56px;
+  max-height: 132px;
+  padding: 12px 16px;
+  gap: 4px;
 
   label {
     display: flex;
     align-items: center;
     width: 100%;
+    font-family: 'Courier', sans-serif;
+    cursor: pointer;
 
     span {
       &:nth-of-type(1) {
         display: inline-block;
         min-width: 80px;
+        font-weight: 600;
       }
 
       &:nth-of-type(2) {
@@ -212,3 +247,7 @@ const CommitList = styled.div`
   }
 `
 
+const EmptyMessage = styled.span`
+  font-size: 14px;
+  color:rgb(103, 103, 103);
+`

@@ -16,7 +16,7 @@ export default Button;
 
 const ButtonWrapper = styled.button`
     width: 100%;
-    height: 48px;
+    min-height: 48px;
     border-radius: 8px;
     background-color: #243469;
     color: #ffffff;
@@ -26,7 +26,11 @@ const ButtonWrapper = styled.button`
     justify-content: center;
     align-items: center;
     cursor: pointer;
+    padding: 8px;
 
+    &:hover {
+        background-color:rgb(17, 25, 53);
+    }
 
     ${props => props.disabled && `
         background-color: #F0F0F0;
