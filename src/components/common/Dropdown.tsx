@@ -5,9 +5,10 @@ interface DropdownProps {
     optionList: string[];
     selectedValue: string;
     onChange: (value: string) => void;
+    placeholder?: string;
 }
 
-const Dropdown = ({ optionList, selectedValue, onChange }: DropdownProps) => {
+const Dropdown = ({ optionList, selectedValue, onChange, placeholder }: DropdownProps) => {
     const [isOpen, setIsOpen] = useState(false);
 
     const handleOptionClick = (value: string) => {
@@ -17,11 +18,13 @@ const Dropdown = ({ optionList, selectedValue, onChange }: DropdownProps) => {
 
     return (
         <SelectContainer>
-            <Selected onClick={() => setIsOpen(!isOpen)}>
-                {selectedValue || 'Select an option'}
-                <Arrow isOpen={isOpen} />
+            <Selected
+                disabled={optionList.length === 0}
+                onClick={() => optionList.length > 0 && setIsOpen(!isOpen)}>
+                {selectedValue || (placeholder ?? 'Select an option')}
+                <Arrow isOpen={isOpen} disabled={optionList.length === 0} />
             </Selected>
-            {isOpen && (
+            {isOpen && optionList.length > 0 && (
                 <OptionListContainer>
                     {optionList.map(option => (
                         <Option key={option} onClick={() => handleOptionClick(option)}>
