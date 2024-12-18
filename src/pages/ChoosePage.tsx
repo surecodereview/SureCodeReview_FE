@@ -5,10 +5,17 @@ import { useNavigate } from "react-router-dom";
 import Button from "@/components/common/Button";
 import { useSetRecoilState } from "recoil";
 import { Target, targetState } from "@/recoil/atoms/targetState";
+import { useEffect } from "react";
+import { branchState } from "@/recoil/atoms/branchState";
 
 const ChoosePage = () => {
     const navigate = useNavigate();
     const setTarget = useSetRecoilState(targetState);
+    const setBranch = useSetRecoilState(branchState);
+
+    useEffect(() => {
+        setBranch("");
+    }, [])
 
     const handleButtonClick = (target: Target) => {
         setTarget(target);
