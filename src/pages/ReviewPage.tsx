@@ -12,6 +12,7 @@ import { branchState } from "@/recoil/atoms/branchState";
 import { commitState } from "@/recoil/atoms/commitState";
 import { Navigate, useNavigate } from "react-router-dom";
 import { Code } from "@/components/review/Code";
+import { repositoryState } from "@/recoil/atoms/repositoryState";
 
 const ReviewPage = () => {
     const navigate = useNavigate();
@@ -19,6 +20,7 @@ const ReviewPage = () => {
     const reviews = useRecoilValue(reviewState);
     const [branch, setBranch] = useRecoilState(branchState);
     const commits = useRecoilValue(commitState);
+    const repository = useRecoilValue(repositoryState);
 
     const toggleOpen = (index: number) => {
         setOpenStates(prevStates =>
@@ -33,10 +35,16 @@ const ReviewPage = () => {
     return <Container>
         <Title />
         <Result>
-            <BranchInfo>
-                <H4>target branch</H4>
-                <Code color="#89DAFF">{branch}</Code>
-            </BranchInfo>
+            <SettingInfo>
+                <Info>
+                    <H4>Target Repository</H4>
+                    <Code color="#FFFC49">hi{repository}</Code>
+                </Info>
+                <Info>
+                    <H4>Target Branch</H4>
+                    <Code color="#89DAFF">{branch}</Code>
+                </Info>
+            </SettingInfo>
             {reviews.map((review, idx) =>
                 <ReviewToggle
                     key={review.id}
@@ -67,10 +75,24 @@ const Result = styled.div`
     flex: 1;
 `
 
-const BranchInfo = styled.div`
+const SettingInfo = styled.div`
+    display: flex;
+    flex-direction: column;
+    align-content: flex-start;
+    gap: 16px;
+    margin-bottom: 12px;
+`
+
+const Info = styled.div`
     display: flex;
     align-items: center;
     gap: 12px;
+
+    h4 {
+        width: 140px;
+        white-space: nowrap;
+        font-size: 16px;
+    }
     
     pre {
         width: fit-content;
@@ -82,8 +104,8 @@ const ReviewOtherCode = styled.button`
     gap:8px;
 
     img {
-        height: 18px;
-        width: 18px;
+        height: 16px;
+        width: 16px;
     }
 
     span {
@@ -91,5 +113,6 @@ const ReviewOtherCode = styled.button`
         text-decoration: underline;
         text-decoration-color: #4A7DFF;
         font-size: 16px;
+        font-family: 'Courier', sans-serif;
     }
 `
