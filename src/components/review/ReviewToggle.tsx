@@ -3,6 +3,7 @@ import { H4 } from "@/components/common/H4";
 import ArrowDownIcon from "@assets/arrowDown.svg";
 import ArrowUpIcon from "@assets/arrowUp.svg";
 import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 
 interface ReviewToggleProps {
     commitId: string;
@@ -25,7 +26,9 @@ const ReviewToggle = ({ commitId, commitMessage, isOpen, setIsOpen, review }: Re
             {isOpen && (
                 <ToggleContent>
                     <H4>분석 내용</H4>
-                    <ReactMarkdown>{review}</ReactMarkdown>
+                    <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                        {review}
+                    </ReactMarkdown>
                 </ToggleContent>
             )}
         </ToggleWrapper>
